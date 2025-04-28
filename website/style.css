@@ -1,0 +1,130 @@
+@font-face {
+    font-family: LeagueSpartan;
+    src: url(fonts/league_spartan/LeagueSpartan-Medium.ttf);
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: LeagueSpartan;
+    src: url(fonts/league_spartan/LeagueSpartan-Bold.ttf);
+    font-weight: bold;
+    font-style: normal;
+}
+
+
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: LeagueSpartan;
+    color: #725142;
+}
+
+body
+{
+    opacity: 0;
+    transition: opacity 2s ease; 
+    height: 100vh;
+    background-image: radial-gradient(#dbd5c7, #d6ceba, #b2a486);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+body /* Just to align the text advice for screen size*/ 
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 
+{
+    font-size: 55px;
+    line-height: 56px;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+}
+
+span.small_screen
+{
+    position: absolute;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+
+}
+
+div.slide
+{
+    position: absolute;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+@media screen and (min-width: 1366px) and (min-height: 768px)
+{
+    span.small_screen
+    {
+        opacity: 0;
+    }
+
+    div.active
+    {
+        opacity: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 100%;
+        pointer-events: auto;
+    }
+
+    img
+    {
+        max-width: 84%;
+        max-height: 43%;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+
+    div.slide.background
+    {
+        background-image: url(img/background_blur.png);
+        transition: opacity 1.8s ease;
+        background-size: cover;
+        background-position: center;
+        flex-direction: column;
+    }
+
+    .background > button
+    {
+        margin-bottom: 8%;
+        border: none;
+        padding: 20px;
+        width: 150px;
+        font-size: 21px;
+        font-weight: bold;
+        background-color: #9d9177;
+        border-radius: 20px;
+        color: #faf7f0;
+        cursor: pointer;
+    }
+
+    .gameScreen > h1
+    {
+        display: block;
+        text-align: center;
+        color: #f2e5d6;
+    }
+}
