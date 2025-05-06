@@ -22,6 +22,10 @@
     color: #725142;
 }
 
+html, body {
+    overflow: hidden;
+}
+
 body
 {
     opacity: 0;
@@ -89,13 +93,98 @@ div.slide
         pointer-events: auto;
     }
 
-    img
+    .logo_tela1
+    {
+        position: relative;
+        display: inline-block;
+        width: fit-content;
+        height: fit-content;
+    }
+
+    #logoeterj
     {
         max-width: 84%;
         max-height: 43%;
         object-fit: contain;
         display: block;
         margin: 0 auto;
+    }
+
+    .logo_tela1::before,
+    .logo_tela1::after,
+    .logo_tela1 span::before,
+    .logo_tela1 span::after {
+    content: "";
+    position: absolute;
+    background-color: #725142;
+    z-index: 1;
+    transition: all 0.3s ease;
+    }
+
+    /* Linha superior */
+    .logo_tela1::before {
+    height: 6px;
+    width: 0;
+    top: 0;
+    left: 0;
+    animation: linha-topo 0.8s forwards;
+    animation-delay: 1s;
+    }
+
+    /* Linha direita */
+    .logo_tela1::after {
+    width: 6px;
+    height: 0;
+    top: 0;
+    right: 0;
+    animation: linha-direita 0.45s forwards;
+    animation-delay: 1.85s;
+    }
+
+    /* Linha inferior */
+    .logo_tela1 span::before {
+    height: 6px;
+    width: 0;
+    bottom: 0;
+    right: 0;
+    animation: linha-baixo 0.45s forwards;
+    animation-delay: 2.40s;
+    }
+
+    /* Linha esquerda */
+    .logo_tela1 span::after {
+    width: 6px;
+    height: 0;
+    bottom: 0;
+    left: 0;
+    animation: linha-esquerda 0.45s forwards;
+    animation-delay: 3s;
+    }
+
+    /* Wrapper para criar pseudo-elementos extras */
+    .logo_tela1 span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    }
+
+    @keyframes linha-topo {
+    to { width: 100%; }
+    }
+
+    @keyframes linha-direita {
+    to { height: 100%; }
+    }
+
+    @keyframes linha-baixo {
+    to { width: 100%; }
+    }
+
+    @keyframes linha-esquerda {
+    to { height: 100%; }
     }
 
     div.slide.background
@@ -126,5 +215,11 @@ div.slide
         display: block;
         text-align: center;
         color: #f2e5d6;
+    }
+
+    .cutscene > video
+    {
+        width: 100%;
+        height: 100%;
     }
 }

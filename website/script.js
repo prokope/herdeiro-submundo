@@ -7,6 +7,11 @@ const mediaQuery = window.matchMedia("(min-width: 1366px) and (min-height: 768px
 var firstResize = true;
 var gameInitialized = false;
 var theme = document.getElementById('theme_song');
+var narration = document.querySelectorAll('.narration'); // Taking an array of narration audios
+var narrationIndex = 0;
+var cutscenes = document.querySelectorAll('.cutscene');
+var cutsceneIndex = 0;
+var isFirstScreen = true;
 var currentSlide = 0; // Initializing by the first slide
 
 // Function to change to next slide
@@ -18,7 +23,6 @@ function changeSlide()
     setTimeout(() => 
     {
         currentSlide++;
-        console.log('Estou no slide ', currentSlide);
 
         if (currentSlide == 2)
             {
@@ -39,13 +43,36 @@ function changeSlide()
                 return;
             }
         
-        else if (currentSlide > 2 && gameInitialized == true) // If the game was initialized:
+        else if (gameInitialized == true) // If the game was initialized:
         {
             // Show slide game screens
             theme.volume = 0.02;
             slides[currentSlide].classList.add('active');
-            setTimeout(changeSlide, 4000);
-            return;
+            
+            if (narrationIndex <= 2)
+            {
+                narration[narrationIndex].play();
+                narrationIndex++;
+            }
+
+            if (isFirstScreen)
+            {
+                setTimeout(changeSlide, 4000);  
+                isFirstScreen = false;
+            }
+            
+            else if (currentSlide == 6)
+            {
+                console.log('Tela da cutscene');
+                cutscenes[cutsceneIndex].play();
+
+                setTimeout(changeSlide, 19000)
+            }
+
+            else
+            {
+                setTimeout(changeSlide, 7300);
+            }
         }
 
         else if (currentSlide < slides.length)
@@ -108,9 +135,9 @@ function startGame()
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';
 
-    console.log("Game started!");
-    const startButton = document.querySelector('.background > button'); // seleciona o botão
-    startButton.disabled = true;
+    const startButton = document.querySelector('.background > button');
+    startButton.disabled = true; // The user can't click more than one time
+
     gameInitialized = true;
-    setTimeout(changeSlide, 1200);
+    setTimeout(changeSlide, 1000);
 }
