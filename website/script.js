@@ -14,6 +14,8 @@ var cutsceneIndex = 0;
 var isFirstScreen = true;
 var currentSlide = 0; // Initializing by the first slide
 
+const canvas = document.getElementById('battleCanvas');
+var canvasWidth = canvas.offsetWidth;
 // Function to change to next slide
 function changeSlide() 
 {
@@ -45,7 +47,6 @@ function changeSlide()
         
         else if (gameInitialized == true) // If the game was initialized:
         {
-            // Show slide game screens
             theme.volume = 0.02;
             slides[currentSlide].classList.add('active');
             
@@ -67,6 +68,11 @@ function changeSlide()
                 cutscenes[cutsceneIndex].play();
 
                 setTimeout(changeSlide, 19000)
+            }
+
+            else if (currentSlide == 7) // Tela da batalha
+            {
+                console.log("Hora do jogo");
             }
 
             else
@@ -117,6 +123,8 @@ window.addEventListener('resize', () => {
         {
             theme.volume = 0.2;
         }
+
+        canvasWidth = canvas.offsetWidth;
     }
 
     else
@@ -141,3 +149,20 @@ function startGame()
     gameInitialized = true;
     setTimeout(changeSlide, 1000);
 }
+
+
+var playerX = 380;
+const speed = 10;
+const player = document.getElementById('player');
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' && playerX > 0)
+    {
+      playerX -= speed;
+    }
+    else if (e.key === 'ArrowRight' && playerX < canvasWidth - 41)
+    {
+      playerX += speed;
+    }
+    player.style.left = playerX + 'px';
+});
