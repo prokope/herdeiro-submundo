@@ -229,22 +229,38 @@ div.slide
         border: 3px solid white;
     }
 
-    #player, #enemy
+    #player
     {
         position: absolute;
-        width: 40px;
-        height: 40px;
+        background-image: url(img/klleythus_pixelart.png);
+        background-size: cover;
+        width: 60px;
+        height: 110px;
     }
 
     #player
     {
-        background-color: darkred;
         bottom: 60px;
     }
 
     #enemy
     {
-        background-color: darkgreen;
+        background-image: url(img/driade_pixelart.png);
+        position: absolute;
+        border: 3px solid rgb(69, 92, 65);
+        background-size: cover;
+        width: 110px;
+        height: 110px;
         top: 20px;
     }
+
+    .projectile 
+    {
+        width: 10px;
+        border-radius: 3px;
+        height: 20px;
+        background-color: rgb(69, 92, 65);
+        position: absolute;
+    }
+
 }

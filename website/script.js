@@ -16,6 +16,7 @@ var currentSlide = 0; // Initializing by the first slide
 
 const canvas = document.getElementById('battleCanvas');
 var canvasWidth = canvas.offsetWidth;
+
 // Function to change to next slide
 function changeSlide() 
 {
@@ -150,8 +151,7 @@ function startGame()
     setTimeout(changeSlide, 1000);
 }
 
-
-var playerX = 380;
+var playerX = (window.innerWidth / 2); // It will start with 50% of screen width (Centered)
 const speed = 10;
 const player = document.getElementById('player');
 
@@ -166,3 +166,50 @@ document.addEventListener('keydown', (e) => {
     }
     player.style.left = playerX + 'px';
 });
+
+setInterval(() => { // Refreshing the enemy's position each 2 seconds
+    enemy.style.left = playerX + 'px';
+}, 2000);
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function createEnemyProjectile() {
+    const projectile = document.createElement('div');
+    projectile.classList.add('projectile');
+
+    let projectileRandom = getRandomInt(5, 80);
+    projectile.style.left = (enemy.offsetLeft + projectileRandom) + 'px';
+    projectile.style.top = (enemy.offsetTop + 120) + 'px';
+    canvas.appendChild(projectile);
+  
+    const interval = setInterval(() => {
+      const top = parseInt(projectile.style.top);
+      if (top > 1080) {
+        projectile.remove();
+        clearInterval(interval);
+      } else {
+        projectile.style.top = (top + 5) + 'px';
+  
+        // Colision with player
+        const projLeft = projectile.offsetLeft;
+        const projTop = projectile.offsetTop;
+        const playerLeft = player.offsetLeft;
+        const playerTop = player.offsetTop;
+  
+        if (
+          projLeft < playerLeft + 40 &&
+          projLeft + 8 > playerLeft &&
+          projTop < playerTop + 40 &&
+          projTop + 20 > playerTop
+        ) {
+          clearInterval(interval);
+          projectile.remove();
+        }
+      }
+    }, 16);
+  }
+  
+  // Shoot each 2 seconds
+  setInterval(createEnemyProjectile, 800);
