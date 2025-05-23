@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Batalha Final – Herdeiro do Submundo</title>
+
+<!-- ---------- ESTILO (tudo em um lugar) ---------- -->
+<style>
+@font-face {
+  font-family: LeagueSpartan;
+  src: url(fonts/league_spartan/LeagueSpartan-Medium.ttf);
+  font-weight: 400;
+}
+@font-face {
+  font-family: LeagueSpartan;
+  src: url(fonts/league_spartan/LeagueSpartan-Bold.ttf);
+  font-weight: 700;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:LeagueSpartan}
+html,body{overflow:hidden;height:100%}
+body{
+  background:radial-gradient(#dbd5c7,#d6ceba,#b2a486);
+  display:flex;align-items:center;justify-content:center
+}
+
+/* HUD */
+#hud{
+  position:absolute;top:10px;left:10px;z-index:5;
+  font-size:32px;color:#15aa1d;text-shadow:1px 1px 2px #000;
+}
+#hud span{color:#15aa1d}
+
+/* Arena de batalha */
+#battleCanvas{
+  position:relative;
+  width:100vw;height:100vh;
+  background:#111;border:3px solid #fff;
+  overflow:hidden;
+}
+
+/* Personagens */
+#player{
+  position:absolute;bottom:60px;
+  width:60px;height:110px;
+  background:url(img/klleythus_pixelart.png) center/cover;
+}
+#enemy{
+  position:absolute;top:20px;
+  width:110px;height:110px;
+  background:url(img/driade_pixelart.png) center/cover;
+  border:3px solid #455c41;
+}
+
+/* Projetéis */
+.projectile{
+  position:absolute;width:10px;height:20px;
+  border-radius:3px;background:#455c41;
+}
+.projectilePlayer{
+  position:absolute;width:10px;height:20px;
+  border-radius:3px;background:#e0dbdb;
+}
+</style>
+</head>
+
+<body>
+  <div id="battleCanvas">
+    <!-- HUD de vidas -->
+    <div id="hud">
+      VIDA DO KLLEYTHUS: <span id="vida-jogador">100</span><br>
+      VIDA DO ENEL: <span id="vida-inimigo">500</span>
+    </div>
+
+    <!-- Personagens -->
+    <div id="player"></div>
+    <div id="enemy"></div>
+  </div>
+
+<!-- ---------- SCRIPT (todo o jogo) ---------- -->
+<script>
+/* --- VARIÁVEIS GLOBAIS --- */
+const canvas       = document.getElementById('battleCanvas');
+const player       = document.getElementById('player');
+const enemy        = document.getElementById('enemy');
+const vidaJogadorEl= document.getElementById('vida-jogador');
+const vidaInimigoEl= document.getElementById('vida-inimigo');
+
+let playerLife = 100;
+let enemyLife  = 500;
+
+let playerX    = window.innerWidth/2; // começa centralizado
+const speed    = 10;
+const canvasW  = canvas.offsetWidth;
+
+let tirosInimigoInterval;
+
+/* --- FUNÇÃO PARA ATUALIZAR HUD --- */
+function atualizarHUD(){
+  vidaJogadorEl.textContent = playerLife;
+  vidaInimigoEl.textContent = enemyLife;
+}
+
+/* --- PROJÉTIL DO INIMIGO --- */
+function createEnemyProjectile(){
+  const proj = document.createElement('div');
+  proj.classList.add('projectile');
+  // lança de posição aleatória dentro da largura do inimigo
+  const rand = Math.floor(Math.random()*80)+5;
+  proj.style.left = (enemy.offsetLeft+rand)+'px';
+  proj.style.top  = (enemy.offsetTop+120)+'px';
+  canvas.appendChild(proj);
+
+  const iv = setInterval(()=>{
+    let top = parseInt(proj.style.top);
+    proj.style.top = (top+5)+'px';
+
+    // sai da tela
+    if(top>canvas.offsetHeight){
+      proj.remove();clearInterval(iv);return;
+    }
+
+    // colisão com player
+    const pRect = player.getBoundingClientRect();
+    const bRect = proj.getBoundingClientRect();
+    if(!(bRect.right < pRect.left+2 ||
+         bRect.left  > pRect.right-2||
+         bRect.bottom< pRect.top+2  ||
+         bRect.top   > pRect.bottom-2)){
+      // acertou
+      playerLife -=10;
+      atualizarHUD();
+      proj.remove();clearInterval(iv);
+
+      if(playerLife<=0){
+        clearInterval(tirosInimigoInterval);
+        alert('Klleythus foi derrotado!');
+      }
+    }
+  },16);
+}
+
+/* --- PROJÉTIL DO JOGADOR --- */
+function createPlayerProjectile(){
+  const proj = document.createElement('div');
+  proj.classList.add('projectilePlayer');
+  const left = player.offsetLeft+player.offsetWidth/2-5;
+  proj.style.left = left+'px';
+  proj.style.top  = player.offsetTop+'px';
+  canvas.appendChild(proj);
+
+  const iv = setInterval(()=>{
+    let top = parseInt(proj.style.top);
+    proj.style.top = (top-12)+'px';
+
+    if(top<-20){proj.remove();clearInterval(iv);return;}
+
+    const eRect = enemy.getBoundingClientRect();
+    const bRect = proj.getBoundingClientRect();
+    if(!(bRect.right < eRect.left ||
+         bRect.left  > eRect.right||
+         bRect.bottom< eRect.top  ||
+         bRect.top   > eRect.bottom)){
+      // acertou inimigo
+      enemyLife -=10;
+      atualizarHUD();
+      proj.remove();clearInterval(iv);
+
+      if(enemyLife<=0){
+        clearInterval(tirosInimigoInterval);
+        enemy.remove();
+        alert('Enel foi derrotado! Vitória de Klleythus!');
+      }
+    }
+  },16);
+}
+
+/* --- CONTROLES DE TECLADO --- */
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft' && playerX>0){
+    playerX-=speed;
+  }else if(e.key==='ArrowRight' && playerX<canvasW-60){
+    playerX+=speed;
+  }else if(e.key===' '){ // espaço atira
+    createPlayerProjectile();
+  }
+  player.style.left = playerX+'px';
+});
+
+/* --- SINCRONIZAR INIMIGO (segue o jogador) --- */
+setInterval(()=>{enemy.style.left=playerX+'px';},2000);
+
+/* --- COMEÇAR TIROS DO INIMIGO --- */
+tirosInimigoInterval = setInterval(createEnemyProjectile,800);
+
+/* --- STARTUP --- */
+player.style.left = playerX+'px';
+atualizarHUD();
+</script>
+</body>
+</html>
